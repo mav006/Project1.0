@@ -1,43 +1,66 @@
-#include <stdio.h>
+
 #include "SDL/include/SDL.h"
-#pragma (lib, "SDL/lib/x86/SDL2.lib")
-#pragma (lib, "SDL/lib/x86/SDL2main.lib")
+#include <stdio.h>
+
+#pragma comment (lib, "SDL/lib/x86/SDL2.lib")
+#pragma comment (lib, "SDL/lib/x86/SDL2main.lib")
+
+const int SCREEN_WIDTH = 1000;
+const int SCREEN_HEIGHT = 600;
 
 int main(int argc, char* argv[]) {
 
-	SDL_Window *window;                    // Declare a pointer
+	//The window we'll be rendering to
+	SDL_Window* window = NULL;
 
-	SDL_Init(SDL_INIT_VIDEO);              // Initialize SDL2
+	//The surface contained by the window
+	SDL_Surface* screenSurface = NULL;
 
-	// Create an application window with the following settings:
-	window = SDL_CreateWindow(
-		"An SDL2 window",                  // window title
-		SDL_WINDOWPOS_UNDEFINED,           // initial x position
-		SDL_WINDOWPOS_UNDEFINED,           // initial y position
-		640,                               // width, in pixels
-		480,                               // height, in pixels
-		SDL_WINDOW_OPENGL                  // flags - see below
-	);
+	//Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 
-	// Check that the window was successfully created
-	if (window == NULL) {
-		// In the case that the window could not be made...
-		printf("Could not create window: %s\n", SDL_GetError());
-		return 1;
 	}
 
-	// The window is open: could enter program loop here (see SDL_PollEvent())
+	else
+	{
+		//Create window
+		window = SDL_CreateWindow("paula mola", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		if (window == NULL)
+		{
+			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+		}
+		else
+		{
 
-	SDL_Delay(3000);  // Pause execution for 3000 milliseconds, for example
+			//Get window surface
+			screenSurface = SDL_GetWindowSurface(window);
 
-	// Close and destroy the window
+			//Fill the surface white
+			SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0, 255, 255));
+
+			//Create first rectangle
+			SDL_Rect rect = { 500, 200, 100, 100 };
+			SDL_FillRect(screenSurface, &rect, SDL_MapRGB(screenSurface->format, 0x00, 0x00, 0x00));
+
+			//Create rectangle with space
+			SDL_Init(SDL_INIT_VIDEO);
+
+			//Update the surface
+			SDL_UpdateWindowSurface(window);
+
+			//Wait two seconds
+			SDL_Delay(5000);
+		}
+
+	}
+
+	//Destroy window
 	SDL_DestroyWindow(window);
 
-	// Clean up
+	//Quit SDL subsystems
 	SDL_Quit();
 
-
 	return 0;
-
 }
-
